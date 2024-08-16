@@ -1,8 +1,8 @@
 #!/bin/bash
-if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ;fi
+if [ -n "$DB_PASSWD_FILE" ] && [ -r "$DB_PASSWD_FILE" ]; then
+    DB_PASSWD=$(cat $DB_PASSWD_FILE)
+fi
 
-service mariadb start
-
-mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
-
-exec /server --createDatabase=true
+if [ -n "$REDIS_PASSWD_FILE" ] && [ -r "$REDIS_PASSWD_FILE" ]; then
+    REDIS_PASSWD=$(cat $REDIS_PASSWD_FILE)
+fi

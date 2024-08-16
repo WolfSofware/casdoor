@@ -6,22 +6,18 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: STANDARD
-    entrypoint: /bin/sh -c './server --createDatabase=true'
     ports:
       - "8000:8000"
     depends_on:
       - db
+    secrets:
+      - postgres_root
+      - redis_password
     environment:
       RUNNING_IN_DOCKER: "true"
+      DB_PASSWORD_FILE: "/run/secrets/postgres_root"
+      REDIS_PASSWORD_FILE: "/run/secrets/redis_password"
+      dataSourceName: "user=postgres password=${DB_PASSWORD} host=postgres port=5432 sslmode=disable dbname=casdoor"
+      redisEndpoint: redis:6379,8,${REDIS_PASSWORD}
     volumes:
       - ./conf:/conf/
-  db:
-    restart: always
-    image: mysql:8.0.25
-    platform: linux/amd64
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-    volumes:
-      - /usr/local/docker/mysql:/var/lib/mysql

@@ -37,23 +37,6 @@ COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.co
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
-ENTRYPOINT ["/server"]
-
-
-FROM debian:latest AS db
-RUN apt update \
-    && apt install -y \
-        mariadb-server \
-        mariadb-client \
-    && rm -rf /var/lib/apt/lists/*
-
-
-FROM db AS ALLINONE
-LABEL MAINTAINER="https://casdoor.org/"
-ARG TARGETOS
-ARG TARGETARCH
-ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
-
 RUN apt update
 RUN apt install -y ca-certificates && update-ca-certificates
 
